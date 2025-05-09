@@ -1,0 +1,171 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 210 20% 25%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 20% 25%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 20% 25%;
+
+    --primary: 180 70% 40%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 180 30% 96%;
+    --secondary-foreground: 180 70% 30%;
+
+    --muted: 210 20% 96%;
+    --muted-foreground: 210 20% 60%;
+
+    --accent: 180 70% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 210 20% 90%;
+    --input: 210 20% 90%;
+    --ring: 180 70% 40%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 210 30% 10%;
+    --foreground: 0 0% 95%;
+
+    --card: 210 30% 15%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 210 30% 15%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 180 70% 40%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 180 30% 20%;
+    --secondary-foreground: 180 70% 80%;
+
+    --muted: 210 30% 20%;
+    --muted-foreground: 210 20% 70%;
+
+    --accent: 180 70% 35%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 210 30% 25%;
+    --input: 210 30% 25%;
+    --ring: 180 70% 40%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Improve text readability on mobile */
+  h1 {
+    @apply text-3xl md:text-4xl lg:text-5xl;
+  }
+  h2 {
+    @apply text-2xl md:text-3xl lg:text-4xl;
+  }
+  h3 {
+    @apply text-xl md:text-2xl;
+  }
+  p {
+    @apply text-sm md:text-base;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 100px; /* Increased padding for floating header */
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+}
+
+body {
+  font-feature-settings: "rlig" 1, "calt" 1;
+  padding-top: 90px; /* Increased padding for taller header */
+  overflow-x: hidden; /* Prevent horizontal scrolling on mobile */
+}
+
+.font-sans {
+  font-family: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Optimize transitions for performance */
+.transition-transform,
+.transition-opacity,
+.transition-colors,
+.transition-all {
+  will-change: transform, opacity;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Adjust spacing for mobile */
+  section {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+  }
+
+  /* Improve touch targets */
+  button,
+  a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Adjust body padding for mobile header */
+  body {
+    padding-top: 80px;
+  }
+}
+
+/* Prevent content from being hidden under fixed header on mobile */
+@media (max-width: 768px) {
+  body {
+    padding-top: 80px;
+  }
+}
+
+/* Custom cursor styles */
+.cursor-dot {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  contain: layout style size;
+  will-change: transform;
+}
+
+/* Improve form elements on mobile */
+input,
+textarea,
+select {
+  font-size: 16px !important; /* Prevent zoom on focus in iOS */
+}
+
+/* Fix for iOS momentum scrolling */
+.overflow-y-auto,
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
