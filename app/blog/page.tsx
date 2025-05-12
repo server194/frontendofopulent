@@ -26,7 +26,7 @@ export default function BlogPage() {
   useEffect(() => {
     const fetchBlogPosts = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/api/blogs/");
+        const res = await fetch("https://backendofopulent-production.up.railway.app/api/blogs/");
         const data = await res.json();
         setBlogPosts(data);
       } catch (err) {

@@ -222,7 +222,7 @@ export default function BlogDetailPage() {
     
     // Django typically returns a relative URL starting with /media/
     if (url.startsWith('/media/')) {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://backendofopulent-production.up.railway.app/';
       const fullUrl = `${baseUrl}${url}`;
       console.log("Formatted Django media URL:", fullUrl);
       return fullUrl;
@@ -235,7 +235,7 @@ export default function BlogDetailPage() {
     }
     
     // For any other format of URL, assume it's relative to the API root
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://backendofopulent-production.up.railway.app';
     const fullUrl = `${baseUrl}/media/${url}`;
     console.log("Constructed URL for relative path:", fullUrl);
     return fullUrl;
@@ -244,7 +244,7 @@ export default function BlogDetailPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://backendofopulent-production.up.railway.app';
         const res = await fetch(`${apiBaseUrl}/api/blogs/${slug}/`);
         const blogListRes = await fetch(`${apiBaseUrl}/api/blogs/`);
 
