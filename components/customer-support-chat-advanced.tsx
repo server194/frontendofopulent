@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -46,34 +45,6 @@ export function CustomerSupportChatAdvanced() {
     setIsOpen(!isOpen);
   };
 
-  // const handleSendMessage = () => {
-  //   if (inputValue.trim() === "") return
-
-  //   // Add user message
-  //   const userMessage: Message = {
-  //     id: Date.now().toString(),
-  //     text: inputValue,
-  //     sender: "user",
-  //     timestamp: new Date(),
-  //   }
-  //   setMessages((prev) => [...prev, userMessage])
-  //   setInputValue("")
-
-  //   // Show typing indicator
-  //   setIsTyping(true)
-
-  //   // Simulate agent response after a delay
-  //   setTimeout(() => {
-  //     setIsTyping(false)
-  //     const agentMessage: Message = {
-  //       id: (Date.now() + 1).toString(),
-  //       text: "Thank you for your message. One of our textile specialists will respond shortly. Is there anything specific about our products or services you'd like to know?",
-  //       sender: "agent",
-  //       timestamp: new Date(),
-  //     }
-  //     setMessages((prev) => [...prev, agentMessage])
-  //   }, 2000)
-  // }
   const handleSendMessage = async () => {
     if (inputValue.trim() === "") return;
 
@@ -88,18 +59,37 @@ export function CustomerSupportChatAdvanced() {
     setIsTyping(true);
 
     try {
-      const response = await fetch("https://backendofopulent-production.up.railway.app/api/chat/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message: inputValue }),
-      });
+      const response = await fetch(
+        "https://openrouter.ai/api/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            Authorization:
+              "Bearer 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",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://www.opulentinternational.com",
+            "X-Title": "Opulent Support Chat",
+          },
+          body: JSON.stringify({
+            model: "deepseek/deepseek-r1:free",
+            messages: [
+              {
+                role: "user",
+                content: inputValue,
+              },
+            ],
+          }),
+        }
+      );
 
       const data = await response.json();
+
+      const reply =
+        data?.choices?.[0]?.message?.content || "Sorry, no response received.";
+
       const agentMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: data.reply || "Sorry, something went wrong.",
+        text: reply,
         sender: "agent",
         timestamp: new Date(),
       };
@@ -110,7 +100,7 @@ export function CustomerSupportChatAdvanced() {
         ...prev,
         {
           id: (Date.now() + 1).toString(),
-          text: "Sorry, we couldn't reach the server.",
+          text: "Sorry, we couldn't reach the AI server.",
           sender: "agent",
           timestamp: new Date(),
         },
@@ -127,33 +117,27 @@ export function CustomerSupportChatAdvanced() {
     }
   };
 
-  // Auto-scroll to bottom when messages change or typing indicator appears
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  // Focus input when chat opens
   useEffect(() => {
     if (isOpen) {
       inputRef.current?.focus();
     }
   }, [isOpen]);
 
-  // Simulate random online/offline status changes
   useEffect(() => {
     const interval = setInterval(() => {
-      setIsOnline(Math.random() > 0.3); // 70% chance of being online
-    }, 60000); // Check every minute
-
+      setIsOnline(Math.random() > 0.3);
+    }, 60000);
     return () => clearInterval(interval);
   }, []);
 
-  // Format time as HH:MM
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
-  // Chat window variants for animation
   const chatVariants = {
     hidden: isMobile
       ? { opacity: 0, y: "100%" }
@@ -166,7 +150,6 @@ export function CustomerSupportChatAdvanced() {
 
   return (
     <>
-      {/* Notification Badge */}
       <AnimatePresence>
         {!isOpen && messages.length > 1 && (
           <motion.div
@@ -180,7 +163,6 @@ export function CustomerSupportChatAdvanced() {
         )}
       </AnimatePresence>
 
-      {/* Chat Button */}
       <motion.button
         onClick={toggleChat}
         className={`fixed ${
@@ -199,7 +181,6 @@ export function CustomerSupportChatAdvanced() {
         )}
       </motion.button>
 
-      {/* Chat Window */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -214,7 +195,6 @@ export function CustomerSupportChatAdvanced() {
                 : "bottom-24 right-6 w-[350px] sm:w-[380px] h-[500px] rounded-lg"
             }`}
           >
-            {/* Chat Header */}
             <div className="bg-primary text-white p-4">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center">
@@ -246,7 +226,6 @@ export function CustomerSupportChatAdvanced() {
                         variant="ghost"
                         size="icon"
                         className="text-white hover:bg-primary-foreground/10 h-8 w-8"
-                        aria-label="Voice call"
                       >
                         <Phone size={16} />
                       </Button>
@@ -254,7 +233,6 @@ export function CustomerSupportChatAdvanced() {
                         variant="ghost"
                         size="icon"
                         className="text-white hover:bg-primary-foreground/10 h-8 w-8"
-                        aria-label="Video call"
                       >
                         <Video size={16} />
                       </Button>
@@ -265,7 +243,6 @@ export function CustomerSupportChatAdvanced() {
                     size="icon"
                     onClick={toggleChat}
                     className="text-white hover:bg-primary-foreground/10 h-8 w-8"
-                    aria-label="Close chat"
                   >
                     <X size={16} />
                   </Button>
@@ -277,7 +254,6 @@ export function CustomerSupportChatAdvanced() {
               </div>
             </div>
 
-            {/* Chat Messages */}
             <div className="flex-grow p-4 overflow-y-auto bg-gray-50">
               <div className="space-y-4">
                 {messages.map((message) => (
@@ -329,7 +305,6 @@ export function CustomerSupportChatAdvanced() {
                   </div>
                 ))}
 
-                {/* Typing indicator */}
                 {isTyping && (
                   <div className="flex justify-start">
                     <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center mr-2 flex-shrink-0">
@@ -345,17 +320,13 @@ export function CustomerSupportChatAdvanced() {
                       <div className="flex space-x-1">
                         <motion.div
                           animate={{ y: [0, -5, 0] }}
-                          transition={{
-                            repeat: Number.POSITIVE_INFINITY,
-                            duration: 1,
-                            delay: 0,
-                          }}
+                          transition={{ repeat: Infinity, duration: 1 }}
                           className="w-2 h-2 bg-gray-400 rounded-full"
                         />
                         <motion.div
                           animate={{ y: [0, -5, 0] }}
                           transition={{
-                            repeat: Number.POSITIVE_INFINITY,
+                            repeat: Infinity,
                             duration: 1,
                             delay: 0.2,
                           }}
@@ -364,7 +335,7 @@ export function CustomerSupportChatAdvanced() {
                         <motion.div
                           animate={{ y: [0, -5, 0] }}
                           transition={{
-                            repeat: Number.POSITIVE_INFINITY,
+                            repeat: Infinity,
                             duration: 1,
                             delay: 0.4,
                           }}
@@ -378,14 +349,12 @@ export function CustomerSupportChatAdvanced() {
               </div>
             </div>
 
-            {/* Chat Input */}
             <div className="p-3 border-t border-gray-200 bg-white">
               <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
                   size="icon"
                   className="text-gray-500 hover:text-primary"
-                  aria-label="Attach file"
                 >
                   <Paperclip size={18} />
                 </Button>
@@ -403,7 +372,6 @@ export function CustomerSupportChatAdvanced() {
                     variant="ghost"
                     size="icon"
                     className="absolute right-1 top-1/2 -translate-y-1/2 text-gray-500 hover:text-primary"
-                    aria-label="Add emoji"
                   >
                     <Smile size={18} />
                   </Button>
