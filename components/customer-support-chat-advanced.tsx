@@ -88,7 +88,7 @@ export function CustomerSupportChatAdvanced() {
     setIsTyping(true);
 
     try {
-      const response = await fetch("http://localhost:8000/api/chat/", {
+      const response = await fetch("https://backendofopulent-production.up.railway.app/api/chat/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
