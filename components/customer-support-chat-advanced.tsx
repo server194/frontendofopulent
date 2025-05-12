@@ -476,64 +476,65 @@ export function CustomerSupportChatAdvanced() {
     setIsOpen(!isOpen);
   };
 
-  const handleSendMessage = async () => {
-    if (inputValue.trim() === "") return;
+const handleSendMessage = async () => {
+  if (inputValue.trim() === "") return;
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: inputValue,
-      sender: "user",
+  const userMessage: Message = {
+    id: Date.now().toString(),
+    text: inputValue,
+    sender: "user",
+    timestamp: new Date(),
+  };
+  setMessages((prev) => [...prev, userMessage]);
+  setInputValue("");
+  setIsTyping(true);
+
+  try {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer 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",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://opulent.ai",
+        "X-Title": "Opulent Chat",
+      },
+      body: JSON.stringify({
+        model: "deepseek/deepseek-r1-zero:free",
+        messages: [
+          {
+            role: "user",
+            content: inputValue,
+          },
+        ],
+      }),
+    });
+
+    const data = await response.json();
+    const replyContent = data?.choices?.[0]?.message?.content || "Sorry, something went wrong.";
+
+    const agentMessage: Message = {
+      id: (Date.now() + 1).toString(),
+      text: replyContent,
+      sender: "agent",
       timestamp: new Date(),
     };
-    setMessages((prev) => [...prev, userMessage]);
-    setInputValue("");
-    setIsTyping(true);
-
-    try {
-      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": "Bearer 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",
-          "Content-Type": "application/json",
-          "HTTP-Referer": "https://opulent.ai",
-          "X-Title": "Opulent Chat",
-        },
-        body: JSON.stringify({
-          model: "deepseek/deepseek-r1-zero:free",
-          messages: [
-            {
-              role: "user",
-              content: inputValue,
-            },
-          ],
-        }),
-      });
-
-      const data = await response.json();
-      const replyContent = data?.choices?.[0]?.message?.content || "Sorry, something went wrong.";
-
-      const agentMessage: Message = {
+    setMessages((prev) => [...prev, agentMessage]);
+  } catch (error) {
+    console.error("Chat error:", error);
+    setMessages((prev) => [
+      ...prev,
+      {
         id: (Date.now() + 1).toString(),
-        text: replyContent,
+        text: "Sorry, we couldn't reach the server.",
         sender: "agent",
         timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, agentMessage]);
-    } catch (error) {
-      console.error("Chat error:", error);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: (Date.now() + 1).toString(),
-          text: "Sorry, we couldn't reach the server.",
-          sender: "agent",
-          timestamp: new Date(),
-        },
-      ]);
-    } finally {
-      setIsTyping(false);
-    }
-  };
+      },
+    ]);
+  } finally {
+    setIsTyping(false);
+  }
+};
+
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -720,3 +721,4 @@ export function CustomerSupportChatAdvanced() {
     </>
   );
 }
+
